@@ -1,0 +1,16 @@
+{% extends 'garage/public_base.html' %}
+{% load garage_extras %}
+{% block title %}Login - Garage Management System{% endblock %}
+{% block content %}
+<div class="auth-wrap"><div class="card auth-card">
+    <div class="brand-mark">{% icon 'tool' 26 %}</div>
+    <h2>Staff login</h2>
+    <p class="muted" style="text-align:center;margin-top:-4px">Sign in to manage the garage</p>
+    <form method="post">{% csrf_token %}
+        {{ form.non_field_errors }}
+        {% for field in form %}<div class="row">{{ field.label_tag }}{{ field }}{{ field.errors }}</div>{% endfor %}
+        <input type="hidden" name="next" value="{{ next }}">
+        <button class="btn" style="width:100%;justify-content:center" type="submit">Login</button>
+    </form>
+</div></div>
+{% endblock %}

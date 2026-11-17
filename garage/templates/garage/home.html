@@ -1,0 +1,68 @@
+{% extends 'garage/public_base.html' %}
+{% load garage_extras %}
+{% block content %}
+<section class="hero"><div class="wrap">
+    <div>
+        <span class="eyebrow">Introduction to our web page</span>
+        <h1>In this garage we have <em>all you need</em></h1>
+        <p>In this garage we shall have all needful requirements in it &mdash; skilled mechanics, honest pricing and a system that keeps every job on track.</p>
+        <div class="cta"><a class="btn accent" href="#services">See services</a><a class="btn ghost" href="#contact">Contact us</a></div>
+    </div>
+    <div><svg class="car" viewBox="0 0 520 280" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+<defs><linearGradient id="bd" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fbbf24"/><stop offset="1" stop-color="#d97706"/></linearGradient></defs>
+<ellipse cx="262" cy="236" rx="225" ry="14" fill="rgba(0,0,0,.28)"/>
+<path d="M38 188 Q36 150 78 144 L148 138 Q176 88 232 82 L332 82 Q390 88 414 138 L462 146 Q492 150 492 184 L492 204 L38 204 Z" fill="url(#bd)"/>
+<path d="M170 138 Q192 100 236 96 L296 96 L296 138 Z" fill="#dbeafe"/>
+<path d="M310 96 L336 96 Q374 102 392 138 L310 138 Z" fill="#dbeafe"/>
+<rect x="298" y="96" width="10" height="42" fill="#b45309"/>
+<rect x="38" y="176" width="454" height="6" fill="#b45309" opacity=".5"/>
+<rect x="468" y="160" width="24" height="14" rx="5" fill="#fff7d6"/>
+<rect x="38" y="160" width="18" height="14" rx="5" fill="#ef4444"/>
+<g><circle cx="132" cy="206" r="38" fill="#1f1535"/><circle cx="132" cy="206" r="20" fill="#cbb7e6"/><circle cx="132" cy="206" r="7" fill="#1f1535"/></g>
+<g><circle cx="404" cy="206" r="38" fill="#1f1535"/><circle cx="404" cy="206" r="20" fill="#cbb7e6"/><circle cx="404" cy="206" r="7" fill="#1f1535"/></g>
+</svg></div>
+</div></section>
+
+<section class="section" id="services"><div class="wrap">
+    <h2>Services of our garage</h2><p class="lead">Repair, cleaning, maintenance, painting, tyre changing, oil changes and easy bill payment.</p>
+    <div class="feat-grid">
+    {% for s in services %}
+        <div class="feat"><div class="ico">{% icon 'tool' 24 %}</div><h3>{{ s.name }}</h3><p>{{ s.description|default:"Professional service by our mechanics." }}</p><span class="price">{{ s.price|money }}</span></div>
+    {% empty %}
+        <div class="feat"><div class="ico">{% icon 'tool' 24 %}</div><h3>Repair</h3><p>Diagnosis and repair of all faults.</p></div>
+        <div class="feat"><div class="ico">{% icon 'check' 24 %}</div><h3>Cleaning</h3><p>Interior and exterior cleaning.</p></div>
+        <div class="feat"><div class="ico">{% icon 'clock' 24 %}</div><h3>Maintenance</h3><p>Scheduled servicing to keep you moving.</p></div>
+        <div class="feat"><div class="ico">{% icon 'edit' 24 %}</div><h3>Painting</h3><p>Body work and fresh paint finishes.</p></div>
+        <div class="feat"><div class="ico">{% icon 'grid' 24 %}</div><h3>Tyre changing</h3><p>Fitting, balancing and replacement.</p></div>
+        <div class="feat"><div class="ico">{% icon 'dollar' 24 %}</div><h3>Changing oil</h3><p>Quality oil and filters, fast.</p></div>
+    {% endfor %}
+    </div>
+</div></section>
+
+<section class="section" style="padding-top:0"><div class="wrap">
+    <h2>Attributes of our garage</h2><p class="lead">The records we keep for every job.</p>
+    <div class="feat-grid">
+        <div class="feat"><div class="ico">{% icon 'tool' 24 %}</div><h3>Mechanic</h3><p>Speciality, contact and workload.</p></div>
+        <div class="feat"><div class="ico">{% icon 'file' 24 %}</div><h3>Customer bill</h3><p>Total, discount, net cost and balance.</p></div>
+        <div class="feat"><div class="ico">{% icon 'card' 24 %}</div><h3>Payment</h3><p>Method, amount and receipt.</p></div>
+        <div class="feat"><div class="ico">{% icon 'clipboard' 24 %}</div><h3>Jobcard</h3><p>Problem, status and recommendation.</p></div>
+        <div class="feat"><div class="ico">{% icon 'list' 24 %}</div><h3>Jobcard item</h3><p>Each service, quantity and price.</p></div>
+        <div class="feat"><div class="ico">{% icon 'grid' 24 %}</div><h3>Services</h3><p>Your price list and durations.</p></div>
+    </div>
+</div></section>
+
+<section class="section" style="padding-top:0"><div class="wrap">
+    <h2>How it works</h2><p class="lead">Four simple steps.</p>
+    <div class="steps">
+        <div class="step"><h3>Register</h3><p class="muted">Add the customer and vehicle.</p></div>
+        <div class="step"><h3>Job card</h3><p class="muted">Describe the problem, pick services and a mechanic.</p></div>
+        <div class="step"><h3>Bill</h3><p class="muted">Generate the bill and apply any discount.</p></div>
+        <div class="step"><h3>Pay</h3><p class="muted">Receive payment and issue a receipt.</p></div>
+    </div>
+</div></section>
+
+<section class="wrap" id="contact"><div class="band">
+    <h2>Ready to get your car back on the road?</h2>
+    <a class="btn" href="{% if user.is_authenticated %}{% url 'jobcard_create' %}{% else %}{% url 'login' %}{% endif %}">{% if user.is_authenticated %}Create a job card{% else %}Staff login{% endif %}</a>
+</div></section>
+{% endblock %}

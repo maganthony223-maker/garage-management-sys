@@ -1,0 +1,30 @@
+{% extends 'garage/base.html' %}
+{% load garage_extras %}
+{% block content %}
+<div class="page-head">
+    <div><h2>{{ object }} <span class="badge b-{{ object.status|slugify }}">{{ object.get_status_display }}</span></h2><p>Opened {{ object.date_opened }}{% if object.date_closed %} &middot; Closed {{ object.date_closed }}{% endif %}</p></div>
+    <div class="toolbar no-print">
+        <a class="btn secondary" href="{% url 'jobcard_list' %}">{% icon 'back' %} Back</a>
+        <a class="btn secondary" href="{% url 'jobcard_update' object.pk %}">{% icon 'edit' %} Edit</a>
+        {% if object.bill %}<a class="btn" href="{% url 'bill_detail' object.bill.pk %}">{% icon 'file' %} View bill</a>
+        {% else %}<a class="btn accent" href="{% url 'bill_create' %}?jobcard={{ object.pk }}">{% icon 'file' %} Generate bill</a>{% endif %}
+    </div>
+</div>
+<div class="card" style="margin-bottom:20px"><div class="detail-grid">
+    <div class="kv"><small>Customer</small><div>{{ object.customer }}</div><span class="muted">{{ object.customer.phone }}</span></div>
+    <div class="kv"><small>Mechanic</small><div>{{ object.mechanic|default:"Unassigned" }}</div></div>
+    <div class="kv"><small>Vehicle</small><div>{{ object.vehicle_reg }}</div><span class="muted">{{ object.vehicle_model }}</span></div>
+</div>
+<hr style="border:0;border-top:1px solid var(--line);margin:20px 0">
+<div class="kv"><small>Problem</small><div style="font-weight:500">{{ object.problem|linebreaksbr }}</div></div>
+{% if object.recommendation %}<div class="kv" style="margin-top:14px"><small>Recommendation</small><div style="font-weight:500">{{ object.recommendation|linebreaksbr }}</div></div>{% endif %}
+</div>
+<div class="card flush"><div class="card-head"><h3>Items</h3></div>
+<div class="table-wrap"><table>
+    <tr><th>Service</th><th class="num">Qty</th><th class="num">Unit price</th><th class="num">Line total</th></tr>
+    {% for i in object.items.all %}<tr><td>{{ i.service.name }}</td><td class="num">{{ i.quantity }}</td><td class="num">{{ i.unit_price|money }}</td><td class="num">{{ i.line_total|money }}</td></tr>
+    {% empty %}<tr><td colspan="4" class="empty">No items added.</td></tr>{% endfor %}
+</table></div>
+<div style="padding:16px 20px"><div class="totals"><div class="grand"><span>Total</span><span>{{ object.total_cost|money }}</span></div></div></div>
+</div>
+{% endblock %}

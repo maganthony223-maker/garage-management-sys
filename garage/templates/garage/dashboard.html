@@ -1,0 +1,44 @@
+{% extends 'garage/base.html' %}
+{% load garage_extras %}
+{% block content %}
+<div class="page-head">
+    <div><h2>Dashboard</h2><p>Overview of your garage today.</p></div>
+    <div class="toolbar">
+        <a class="btn" href="{% url 'jobcard_create' %}">{% icon 'plus' %} New job card</a>
+        <a class="btn secondary" href="{% url 'customer_create' %}">{% icon 'users' %} New customer</a>
+    </div>
+</div>
+<div class="stats">
+    <div class="stat"><div class="ico c1">{% icon 'users' 22 %}</div><div><b>{{ customers }}</b><span>Customers</span></div></div>
+    <div class="stat"><div class="ico c2">{% icon 'tool' 22 %}</div><div><b>{{ mechanics }}</b><span>Active mechanics</span></div></div>
+    <div class="stat"><div class="ico c3">{% icon 'clipboard' 22 %}</div><div><b>{{ open_jobs }}</b><span>Open job cards</span></div></div>
+    <div class="stat"><div class="ico c4">{% icon 'file' 22 %}</div><div><b>{{ unpaid_bills }}</b><span>Unpaid bills</span></div></div>
+    <div class="stat"><div class="ico c5">{% icon 'dollar' 22 %}</div><div><b>{{ revenue|money }}</b><span>Revenue received</span></div></div>
+</div>
+<div class="grid-2">
+    <div class="card flush">
+        <div class="card-head"><h3>Recent job cards</h3><a class="btn small secondary" href="{% url 'jobcard_list' %}">View all</a></div>
+        <div class="table-wrap"><table>
+            <tr><th>Job card</th><th>Customer</th><th>Mechanic</th><th>Status</th></tr>
+            {% for j in recent_jobs %}
+            <tr><td><a href="{% url 'jobcard_detail' j.pk %}"><b>{{ j }}</b></a></td><td>{{ j.customer }}</td><td>{{ j.mechanic|default:"-" }}</td>
+                <td><span class="badge b-{{ j.status|slugify }}">{{ j.get_status_display }}</span></td></tr>
+            {% empty %}<tr><td colspan="4" class="empty">No job cards yet.</td></tr>{% endfor %}
+        </table></div>
+    </div>
+    <div style="display:grid;gap:20px;align-content:start">
+        <div class="card"><h3>Jobs by status</h3>
+            {% for s in status_stats %}
+            <div class="bar-row"><div class="top"><span>{{ s.label }}</span><span>{{ s.n }}</span></div>
+            <div class="bar"><i class="{{ s.key }}" style="width:{{ s.pct }}%"></i></div></div>
+            {% endfor %}
+        </div>
+        <div class="card flush"><div class="card-head"><h3>Latest payments</h3></div>
+            <div class="table-wrap"><table>
+            {% for p in recent_payments %}<tr><td><b>{{ p.receipt_no }}</b><br><span class="muted">{{ p.paid_on }}</span></td><td class="num">{{ p.amount|money }}</td></tr>
+            {% empty %}<tr><td class="empty">No payments yet.</td></tr>{% endfor %}
+            </table></div>
+        </div>
+    </div>
+</div>
+{% endblock %}

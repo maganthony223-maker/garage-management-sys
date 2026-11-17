@@ -1,0 +1,24 @@
+{% load static garage_extras %}<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Garage Management System{% endblock %}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+<header class="pub-nav"><div class="in">
+    <a class="brand" href="{% url 'index' %}"><span class="brand-mark">{% icon 'tool' 20 %}</span><span>GARAGE<small>Management</small></span></a>
+    <div class="links">
+        <a class="l" href="{% url 'index' %}">Welcome</a>
+        <a class="l" href="{% url 'home' %}">Home</a>
+        {% if user.is_authenticated %}<a class="btn small" href="{% url 'dashboard' %}">Dashboard</a>
+        {% else %}<a class="btn small" href="{% url 'login' %}">Staff login</a>{% endif %}
+    </div>
+</div></header>
+{% block content %}{% endblock %}
+<footer class="pub-foot">&copy; {% now "Y" %} Garage Management System &middot; Repair &middot; Maintenance &middot; Painting &middot; Tyres &middot; Oil</footer>
+</body>
+</html>

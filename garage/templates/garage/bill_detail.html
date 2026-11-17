@@ -1,0 +1,39 @@
+{% extends 'garage/base.html' %}
+{% load garage_extras %}
+{% block content %}
+<div class="page-head no-print">
+    <div><h2>{{ object }} <span class="badge b-{{ object.status|slugify }}">{{ object.status }}</span></h2></div>
+    <div class="toolbar">
+        <a class="btn secondary" href="{% url 'bill_list' %}">{% icon 'back' %} Back</a>
+        <button class="btn secondary" onclick="window.print()">{% icon 'printer' %} Print</button>
+        {% if object.balance > 0 %}<a class="btn accent" href="{% url 'payment_create' %}?bill={{ object.pk }}">{% icon 'card' %} Record payment</a>{% endif %}
+    </div>
+</div>
+<div class="card" style="max-width:860px">
+    <div class="invoice-head">
+        <div><div class="brand" style="color:var(--primary-d);padding:0"><span class="brand-mark">{% icon 'tool' 20 %}</span><span>GARAGE<small style="color:var(--muted)">Invoice</small></span></div></div>
+        <div style="text-align:right"><h3 style="margin:0">{{ object }}</h3><span class="muted">Issued {{ object.issued_on }}</span></div>
+    </div>
+    <div class="detail-grid" style="margin-bottom:22px">
+        <div class="kv"><small>Billed to</small><div>{{ object.customer }}</div><span class="muted">{{ object.customer.phone }}</span></div>
+        <div class="kv"><small>Job card</small><div><a href="{% url 'jobcard_detail' object.jobcard.pk %}">{{ object.jobcard }}</a></div><span class="muted">{{ object.jobcard.vehicle_reg }}</span></div>
+    </div>
+    <div class="table-wrap"><table>
+        <tr><th>Service</th><th class="num">Qty</th><th class="num">Unit price</th><th class="num">Total</th></tr>
+        {% for i in object.jobcard.items.all %}<tr><td>{{ i.service.name }}</td><td class="num">{{ i.quantity }}</td><td class="num">{{ i.unit_price|money }}</td><td class="num">{{ i.line_total|money }}</td></tr>{% endfor %}
+    </table></div>
+    <div class="totals" style="margin-top:16px">
+        <div><span>Subtotal</span><span>{{ object.total_bill|money }}</span></div>
+        <div><span>Discount</span><span>- {{ object.discount|money }}</span></div>
+        <div><span>Net cost</span><span><b>{{ object.net_cost|money }}</b></span></div>
+        <div><span>Paid</span><span>{{ object.amount_paid|money }}</span></div>
+        <div class="grand"><span>Balance due</span><span>{{ object.balance|money }}</span></div>
+    </div>
+    <h3 style="margin-top:26px">Payments / receipts</h3>
+    <div class="table-wrap"><table>
+        <tr><th>Receipt</th><th>Method</th><th>Date</th><th class="num">Amount</th></tr>
+        {% for p in object.payments.all %}<tr><td><b>{{ p.receipt_no }}</b></td><td>{{ p.get_method_display }}</td><td>{{ p.paid_on }}</td><td class="num">{{ p.amount|money }}</td></tr>
+        {% empty %}<tr><td colspan="4" class="empty">No payments yet.</td></tr>{% endfor %}
+    </table></div>
+</div>
+{% endblock %}

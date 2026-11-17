@@ -1,0 +1,46 @@
+{% extends 'garage/base.html' %}
+{% load garage_extras %}
+{% block title %}{{ title }} - Garage{% endblock %}
+{% block content %}
+<div class="page-head">
+    <div><h2>{{ title }}</h2><p>{{ paginator.count }} record{{ paginator.count|pluralize }}</p></div>
+    <div class="toolbar">
+        <form method="get" class="search">{% icon 'search' %}
+            {% if active_status %}<input type="hidden" name="status" value="{{ active_status }}">{% endif %}
+            <input class="control" name="q" placeholder="Search {{ title|lower }}..." value="{{ request.GET.q }}">
+        </form>
+        <a class="btn" href="{% url prefix|add:'_create' %}">{% icon 'plus' %} Add new</a>
+    </div>
+</div>
+{% if status_choices %}
+<div class="chips">
+    <a class="chip {% if not active_status %}on{% endif %}" href="?">All</a>
+    {% for key, label in status_choices %}<a class="chip {% if active_status == key %}on{% endif %}" href="?status={{ key }}">{{ label }}</a>{% endfor %}
+</div>
+{% endif %}
+<div class="card flush"><div class="table-wrap"><table>
+    <tr>{% for label, attr in columns %}<th>{{ label }}</th>{% endfor %}<th></th></tr>
+    {% for obj in object_list %}
+    <tr>
+        {% for label, attr in columns %}{% with val=obj|get_attr:attr %}
+        <td class="{% if attr in 'total_cost total_bill discount net_cost amount_paid balance amount price' %}num{% endif %}">
+            {% if attr == 'status' or attr == 'is_active' %}<span class="badge b-{{ val|slugify }}">{{ val }}</span>
+            {% elif forloop.first and prefix == 'jobcard' %}<a href="{% url 'jobcard_detail' obj.pk %}"><b>{{ val }}</b></a>
+            {% elif forloop.first and prefix == 'bill' %}<a href="{% url 'bill_detail' obj.pk %}"><b>{{ val }}</b></a>
+            {% else %}{{ val }}{% endif %}
+        </td>{% endwith %}{% endfor %}
+        <td class="actions">
+            {% if prefix == 'jobcard' %}<a class="btn small icon secondary" title="View" href="{% url 'jobcard_detail' obj.pk %}">{% icon 'eye' 15 %}</a>{% endif %}
+            {% if prefix == 'bill' %}<a class="btn small icon secondary" title="View" href="{% url 'bill_detail' obj.pk %}">{% icon 'eye' 15 %}</a>{% endif %}
+            <a class="btn small icon secondary" title="Edit" href="{% url prefix|add:'_update' obj.pk %}">{% icon 'edit' 15 %}</a>
+            <a class="btn small icon danger" title="Delete" href="{% url prefix|add:'_delete' obj.pk %}">{% icon 'trash' 15 %}</a>
+        </td>
+    </tr>
+    {% empty %}<tr><td colspan="{{ columns|length|add:1 }}" class="empty">Nothing here yet. Click <b>Add new</b> to get started.</td></tr>{% endfor %}
+</table></div></div>
+{% if is_paginated %}<div class="pagination">
+    {% if page_obj.has_previous %}<a class="btn small secondary" href="?{% if qs %}{{ qs }}&{% endif %}page={{ page_obj.previous_page_number }}">&laquo; Prev</a>{% endif %}
+    <span>Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+    {% if page_obj.has_next %}<a class="btn small secondary" href="?{% if qs %}{{ qs }}&{% endif %}page={{ page_obj.next_page_number }}">Next &raquo;</a>{% endif %}
+</div>{% endif %}
+{% endblock %}

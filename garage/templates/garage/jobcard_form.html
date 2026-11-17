@@ -1,0 +1,31 @@
+{% extends 'garage/base.html' %}
+{% load garage_extras %}
+{% block content %}
+<div class="page-head"><div><h2>{% if object %}Edit {{ object }}{% else %}New job card{% endif %}</h2><p>Vehicle details, problem and the services to perform.</p></div></div>
+<form method="post">{% csrf_token %}
+<div class="card" style="margin-bottom:20px">
+    <h3>Job details</h3>{{ form.non_field_errors }}
+    <div class="form-grid">
+    {% for field in form %}
+        <div class="row {% if field.widget_type == 'textarea' %}span2{% endif %}">{{ field.label_tag }}{{ field }}{{ field.errors }}</div>
+    {% endfor %}
+    </div>
+</div>
+<div class="card flush" style="margin-bottom:20px">
+    <div class="card-head"><h3>Job card items (services)</h3></div>
+    {{ formset.management_form }}{{ formset.non_form_errors }}
+    <div class="table-wrap"><table>
+        <tr><th>Service</th><th>Quantity</th><th>Unit price</th>{% if object %}<th>Remove</th>{% endif %}</tr>
+        {% for f in formset %}
+        <tr>{{ f.id }}
+            <td>{{ f.service }}{{ f.service.errors }}</td><td style="width:120px">{{ f.quantity }}{{ f.quantity.errors }}</td>
+            <td style="width:180px">{{ f.unit_price }}{{ f.unit_price.errors }}</td>
+            {% if object %}<td>{% if f.instance.pk %}{{ f.DELETE }}{% endif %}</td>{% endif %}
+        </tr>
+        {% endfor %}
+    </table></div>
+</div>
+<div class="form-actions"><button class="btn" type="submit">{% icon 'check' %} Save job card</button>
+<a class="btn secondary" href="{% url 'jobcard_list' %}">Cancel</a></div>
+</form>
+{% endblock %}

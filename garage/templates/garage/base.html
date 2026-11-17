@@ -1,0 +1,47 @@
+{% load static garage_extras %}<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Garage Management System{% endblock %}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+<input type="checkbox" id="nav-toggle">
+<aside class="sidebar">
+    <a class="brand" href="{% url 'dashboard' %}">
+        <span class="brand-mark">{% icon 'tool' 20 %}</span>
+        <span>GARAGE<small>Management</small></span>
+    </a>
+    <nav class="nav">
+        <a href="{% url 'dashboard' %}" class="{% if request.path == '/dashboard/' %}active{% endif %}">{% icon 'grid' %} Dashboard</a>
+        <div class="nav-label">Workshop</div>
+        <a href="{% url 'jobcard_list' %}" class="{% if '/jobcards/' in request.path %}active{% endif %}">{% icon 'clipboard' %} Job cards</a>
+        <a href="{% url 'service_list' %}" class="{% if '/services/' in request.path %}active{% endif %}">{% icon 'list' %} Services</a>
+        <a href="{% url 'mechanic_list' %}" class="{% if '/mechanics/' in request.path %}active{% endif %}">{% icon 'tool' %} Mechanics</a>
+        <div class="nav-label">People &amp; money</div>
+        <a href="{% url 'customer_list' %}" class="{% if '/customers/' in request.path %}active{% endif %}">{% icon 'users' %} Customers</a>
+        <a href="{% url 'bill_list' %}" class="{% if '/bills/' in request.path %}active{% endif %}">{% icon 'file' %} Bills</a>
+        <a href="{% url 'payment_list' %}" class="{% if '/payments/' in request.path %}active{% endif %}">{% icon 'card' %} Payments</a>
+        <div class="nav-label">Site</div>
+        <a href="{% url 'home' %}">{% icon 'home' %} Public site</a>
+    </nav>
+    <form class="logout" method="post" action="{% url 'logout' %}">{% csrf_token %}
+        <button type="submit">{% icon 'logout' %} Logout</button>
+    </form>
+</aside>
+<div class="main">
+    <div class="topbar">
+        <label for="nav-toggle" class="nav-btn">{% icon 'menu' 24 %}</label>
+        <span class="muted">{% now "l, j F Y" %}</span>
+        <div class="user-chip"><span class="avatar">{{ user.username|slice:":1" }}</span><span>{{ user.get_full_name|default:user.username }}</span></div>
+    </div>
+    <div class="container">
+        {% if messages %}<ul class="messages">{% for m in messages %}<li class="{{ m.tags }}">{{ m }}</li>{% endfor %}</ul>{% endif %}
+        {% block content %}{% endblock %}
+    </div>
+</div>
+</body>
+</html>
